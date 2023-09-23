@@ -85,11 +85,7 @@ app.post("/read", async (req, res) => {
       });
     };
 
-    summary();
-
-
-
-
+    await summary();
 
     res.render("user", {
       user: userData,
