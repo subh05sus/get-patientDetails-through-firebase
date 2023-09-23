@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Details</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: 10px;
+            border-color: #444444;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 90%;
+            max-height: 90%;
+            text-align: left;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+            margin: 8px 0;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 20px;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        button {
+            background-color: #072AC8;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #001c94;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>User Details</h1>
+        <p>Name: <%= user.firstName %> <%= user.lastName %></p>
+        <p>Sex: <%= user.sex %></p>
+        <p>Age: <%= user.age %></p>
+        <p>Phone Number: <%= user.phone %></p>
+        <p>Email: <%= user.email %></p>
+        <p>Height: <%= user.height %></p>
+        <p>Weight: <%= user.weight %></p>
+        <p>Basic Data Given: <%= user.firstData %></p>
+        <p>Summary: <%= user.patientBasicData %></p>
+        
+        <h2>Total Cases:</h2>
+        <ul>
+            <% for (let i = 0; i < user.cases.length; i++) { %>
+                <li>
+                    <h3>Case <%= i + 1 %>:</h3>
+                    <p>Time: <%= user.cases[i].time %></p>
+                    <p>Case Title: <%= user.cases[i].caseTitle %></p>
+                    <p>Description: <%= user.cases[i].description %></p>
+                </li>
+            <% } %>
+        </ul>
+
+        <!-- Back button -->
+        <button onclick="goBack()">Back</button>
+    </div>
+
+    <script>
+        // JavaScript function to go back to the previous page
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

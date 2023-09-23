@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User Details</title>
+</head>
+
+<body>
+    <div class="hero">
+        <h1 class="heroTitle">Get Patient Data</h1>
+    </div>
+    <h1>User Details</h1>
+    <form action="/read" method="POST">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="id" required>
+        <br>
+        <label for="userPasskey">Passkey:</label>
+        <input type="password" id="userPasskey" name="passkey" required>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    
+</body>
+
+</html>

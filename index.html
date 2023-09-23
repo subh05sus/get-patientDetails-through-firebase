@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Get Patient Details</title>
+    <style>
+        body {
+            @import url('https://fonts.googleapis.com/css2?family=Prompt&display=swap');
+            font-family: 'Prompt', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        /* Style for form elements */
+        input[type="text"] {
+            margin: 10px;
+            padding: 10px;
+            padding-left: 15px;
+            font-size: 20px;
+            width: auto;
+            border: 2px solid #ccc; /* Add a border */
+            border-radius: 40px; /* Add rounded corners */
+            outline: none; /* Remove default focus outline */
+        }
+
+        /* Style for the submit button */
+        input[type="submit"] {
+            margin: 10px;
+            padding: 10px;
+            font-size: 20px;
+            border: 2px solid #072AC8; /* Add a border with a Google-like blue color */
+            background-color: #072AC8; /* Set a background color */
+            color: #fff; /* Set text color to white */
+            border-radius: 40px; /* Add rounded corners */
+            cursor: pointer; /* Add a pointer cursor on hover */
+        }
+
+        /* Style for the heading */
+        .heroTitle {
+            font-size: 36px;
+        }
+
+        /* Create a container for the Pass-Key input and the Submit button */
+        .form-container {
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* Set the width of the Patient ID input based on the width of the Pass-Key input and Submit button */
+        #userId {
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="hero">
+        <div class="container">
+            <h1 class="heroTitle">Get Patient Data</h1>
+        </div>
+    </div>
+    <form action="/read" method="POST">
+        <div class="form-container">
+            <input type="text" id="userId" name="id" placeholder="Patient ID" required>
+        </div>
+        <div class="form-container">
+            <input type="text" id="userPasskey" name="passkey" placeholder="Pass-Key" required>
+            <input type="submit" value="Submit">
+        </div>
+    </form>
+</body>
+
+</html>
