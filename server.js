@@ -31,7 +31,7 @@ app.get("/", (req, res) => {
 
 // -------------------------read------------------------------
 
-app.post("/read", async (req, res) => {
+app.post("/PatientData", async (req, res) => {
   const userId = req.body.id;
   const userPasskey = req.body.passkey;
 
@@ -56,6 +56,7 @@ app.post("/read", async (req, res) => {
       return;
     }
 
+    // ------------------------generation of summary-----------------------------
     let caseHistory =
       "You are a bot who takes case history of a patient and summarizes it into 3-4 sentences that a doctor can easity understand. ONLY PROVIDE THE SUMMARY, NO SUMMARY TITLES\n\nHere's the case history of patient:\n";
     caseHistory += userData.patientBasicData;
@@ -84,6 +85,7 @@ app.post("/read", async (req, res) => {
 
     await summary();
 
+    // ----------------------doctor db integration------------------------
     const doctorRef = db.collection("DoctorData").doc("doctor1@example.com");
     const doctorRes = await doctorRef.get();
     const doctorData = doctorRes.data();
@@ -106,15 +108,116 @@ app.post("/read", async (req, res) => {
       // Push the object into the array if it doesn't exist
       allPatientDataArray.push(patientData);
     }
-    console.log(allPatientDataArray);
     await db.collection("DoctorData").doc("doctor1@example.com").update({
       PatientData: allPatientDataArray,
     });
+
+    // ------------------fetching all patient Data-----------------
+
+    console.log(allPatientDataArray);
+
+    if (userData.password !== userPasskey) {
+      res.send("Incorrect passkey");
+      return;
+    }
+
+    for (let i = 0; i < allPatientDataArray.length; i++) {
+      const element = allPatientDataArray[i];
+      try {
+        const allDataRef = db.collection("PatientData").doc(element.email);
+        const allDataRes = await allDataRef.get();
+        const allData = allDataRes.data();
+        if (element.doctorPass === allData.doctorPass) {
+          console.log(allData);
+        }
+      } catch (error) {}
+    }
 
     res.render("user", {
       user: userData,
     });
   } catch (e) {
+    res.send(e);
+  }
+});
+
+// ----------------all data------------------------
+
+app.get("/allData", async (req, res) => {
+  try {
+    const doctorRef = db.collection("DoctorData").doc("doctor1@example.com");
+    const doctorRes = await doctorRef.get();
+    const doctorData = doctorRes.data();
+
+    let allPatientDataArray = doctorData.PatientData;
+    let allPatientDataToBeRendered = []
+
+    for (let i = 0; i < allPatientDataArray.length; i++) {
+      const element = allPatientDataArray[i];
+
+      const userRef = db
+        .collection("PatientData")
+        .doc(allPatientDataArray[i].email);
+      const response = await userRef.get();
+
+      if (!response.exists) {
+        res.send("User not found");
+        return;
+      }
+
+      const userData = response.data();
+
+      console.log(userData);
+      allPatientDataToBeRendered.push(userData)
+
+      
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // const patientData = {
+    //   email: userData.email,
+    //   doctorPass: userData.doctorPass,
+    // };
+
+    // await db.collection("DoctorData").doc("doctor1@example.com").update({
+    //   PatientData: allPatientDataArray,
+    // });
+
+    // console.log(allPatientDataArray);
+
+    // if (userData.password !== userPasskey) {
+    //   res.send("Incorrect passkey");
+    //   return;
+    // }
+
+    // for (let i = 0; i < allPatientDataArray.length; i++) {
+    //   const element = allPatientDataArray[i];
+    //   try {
+    //     const allDataRef = db.collection("PatientData").doc(element.email);
+    //     const allDataRes = await allDataRef.get();
+    //     const allData = allDataRes.data();
+    //     if (element.doctorPass === allData.doctorPass) {
+    //       console.log(allData);
+    //     }
+    //   } catch (error) {}
+    // }
+
+    res.render("allData", {
+      allPatientDataToBeRendered,
+    });
+  } catch (e) {
+    console.error(e);
     res.send(e);
   }
 });

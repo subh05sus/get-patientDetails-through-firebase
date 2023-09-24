@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>User Details</title>
     <style>
@@ -10,7 +11,7 @@
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content:center;
+            justify-content: center;
             align-items: start;
             margin-top: 20px;
             min-height: 100vh;
@@ -61,6 +62,7 @@
         button:hover {
             background-color: #001c94;
         }
+
         @media (max-width: 1080px) {
             .card {
                 padding: 45px;
@@ -69,7 +71,9 @@
             h1 {
                 font-size: 72px;
             }
-            h2,h3{
+
+            h2,
+            h3 {
                 font-size: 60px;
             }
 
@@ -94,40 +98,37 @@
         }
     </style>
 </head>
+
 <body>
     <div class="card">
-        <h1>User Details</h1>
-        <p>Name: <%= user.firstName %> <%= user.lastName %></p>
-        <p>Sex: <%= user.sex %></p>
-        <p>Age: <%= user.age %></p>
-        <p>Phone Number: <%= user.phone %></p>
-        <p>Email: <%= user.email %></p>
-        <p>Height: <%= user.height %></p>
-        <p>Weight: <%= user.weight %></p>
-        <p>Basic Data Given: <%= user.firstData %></p>
-        <p>Summary: <%= user.patientBasicData %></p>
-        
-        <h2>Total Cases:</h2>
-        <ul>
-            <% for (let i = 0; i < user.cases.length; i++) { %>
-                <li>
-                    <h3>Case <%= i + 1 %>:</h3>
-                    <p>Time: <%= user.cases[i].time %></p>
-                    <p>Case Title: <%= user.cases[i].caseTitle %></p>
-                    <p>Description: <%= user.cases[i].description %></p>
-                </li>
-            <% } %>
-        </ul>
 
-        <!-- Back button -->
-        <button onclick="goBack()">Back</button>
+        <% for (let i=0; i < allPatientDataToBeRendered.length; i++) { %>
+            <li>
+                <h3><%= allPatientDataToBeRendered[i].firstName %>
+                        <%= allPatientDataToBeRendered[i].lastName %>
+                </h3>
+                <span><b>Sex:</b> <%= allPatientDataToBeRendered[i].sex %>
+                </span> 
+                <span><b>Age:</b> <%= allPatientDataToBeRendered[i].age %>
+                </span> 
+                <span><b>Phone Number:</b> <%= allPatientDataToBeRendered[i].phone %>
+                </span> 
+                <span><b>Email:</b> <%= allPatientDataToBeRendered[i].email %>
+                </span>
+
+                <p><b>Summary:</b> <%= allPatientDataToBeRendered[i].patientBasicData %>
+                </p>
+            </li>
+            <% } %>
+
+                <button onclick="goBack()">Back</button>
     </div>
 
     <script>
-        // JavaScript function to go back to the previous page
         function goBack() {
             window.history.back();
         }
     </script>
 </body>
+
 </html>
