@@ -22,9 +22,6 @@ const PORT = 3000;
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
 
 const ejs = require("ejs"); // Require EJS
-
-// ...
-
 app.set("view engine", "ejs"); // Set EJS as the view engine
 
 // --------------------view----------------------------------
@@ -70,7 +67,7 @@ app.post("/read", async (req, res) => {
     caseHistory += "NOW GIVE THE SUMMARY";
 
     let summaryofPatient = userData.patientBasicData;
-    
+
     const summary = async () => {
       const chatCompletion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
@@ -87,6 +84,33 @@ app.post("/read", async (req, res) => {
 
     await summary();
 
+    const doctorRef = db.collection("DoctorData").doc("doctor1@example.com");
+    const doctorRes = await doctorRef.get();
+    const doctorData = doctorRes.data();
+
+    let allPatientDataArray = doctorData.PatientData;
+
+    const patientData = {
+      email: userData.email,
+      doctorPass: userData.doctorPass,
+    };
+
+    // Check if the object exists in the array
+    if (
+      !allPatientDataArray.some(
+        (item) =>
+          item.email === patientData.email &&
+          item.doctorPass === patientData.doctorPass
+      )
+    ) {
+      // Push the object into the array if it doesn't exist
+      allPatientDataArray.push(patientData);
+    }
+    console.log(allPatientDataArray);
+    await db.collection("DoctorData").doc("doctor1@example.com").update({
+      PatientData: allPatientDataArray,
+    });
+
     res.render("user", {
       user: userData,
     });
@@ -95,49 +119,36 @@ app.post("/read", async (req, res) => {
   }
 });
 
-// ---------------------firestore structure------------------------------------------------
-// const userData = {
-//     firstName: "Alice",
-//     lastName: "Smith",
-//     sex: "Female",
-//     age: 25,
-//     phone: "1234567890",
-//     email: "alice@example.com",
-//     password: "securepass",
-//     bloodGroup: "O+",
-//     height: "160cm",
-//     weight: "65kg",
-//     totalCases: 2,
-//     cases: [
-//         {
-//             time: "Monday, 8:00 AM",
-//             caseTitle: "Headache",
-//             description: "Had a headache on Monday morning"
-//         },
-//         {
-//             time: "Wednesday, 3:30 PM",
-//             caseTitle: "Allergy",
-//             description: "Experienced allergy symptoms on Wednesday"
-//         }
-//     ],
-//     firstData: "Allergic to peanuts, otherwise healthy",
-//     patientBasicData:""
-// };
+// ---------------------firestore structure-------------------------------
 
 // const userData = {
-//     firstName: "Eva",
-//     lastName: "Williams",
-//     sex: "Female",
-//     age: 28,
-//     phone: "5551234567",
-//     email: "eva@example.com",
-//     password: "mypassword",
-//     bloodGroup: "AB+",
-//     height: "162cm",
-//     weight: "58kg",
-//     totalCases: 0,
-//     cases: [],
-//     patientBasicData: "No recent medical history"
-// };
+//   firstName: "William",
+//   lastName: "Clark",
+//   sex: "Male",
+//   age: 33,
+//   phone: "7776665555",
+//   email: "william@example.com",
+//   password: "williampass",
+//   bloodGroup: "O+",
+//   height: "180cm",
+//   weight: "75kg",
+//   totalCases: 2,
+//   cases: [
+//       {
+//           time: "Wednesday, 4:15 PM",
+//           caseTitle: "Sore Throat",
+//           description: "Had a sore throat on Wednesday afternoon"
+//       },
+//       {
+//           time: "Friday, 5:30 PM",
+//           caseTitle: "Fever",
+//           description: "Experienced fever symptoms on Friday evening"
+//       }
+//   ],
+//   firstData: "Allergic to dust mites, otherwise healthy",
+//   patientBasicData: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+//   chatHistory: [],
+//   doctorPass: "112233"
+// }
 
 // db.collection("PatientData").doc(userData.email).set(userData);
