@@ -26,15 +26,15 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: #fff;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.3);
             padding: 20px;
-            max-width: 100%;
-            max-height: 90%;
+            width: 85%;
+            max-width: 85%;
+            max-height: 85%;
             z-index: 9999;
             overflow-y: scroll;
             border-radius: 15px;
         }
-
 
 
         .card {
@@ -123,9 +123,24 @@
     <div class="card">
         <h1>All Patients</h1>
         <% for (let i=0; i < allPatientDataToBeRendered.length; i++) { %>
-            <li onclick="showPopup('<%= allPatientDataToBeRendered[i].firstName %> <%= allPatientDataToBeRendered[i].lastName %>' , '<%= allPatientDataToBeRendered[i].sex %>' , '<%= allPatientDataToBeRendered[i].age %>' , '<%= allPatientDataToBeRendered[i].phone %>' , '<%= allPatientDataToBeRendered[i].email %>' , '<%= allPatientDataToBeRendered[i].height %>' , '<%= allPatientDataToBeRendered[i].weight %>' , '<%= allPatientDataToBeRendered[i].firstData %>' , '<%= allPatientDataToBeRendered[i].patientBasicData %>','<h2>Total Cases:</h2><ul><% for (let j = 0; j < allPatientDataToBeRendered[i].cases.length; j++) { %><li><h3>Case <%= j + 1 %>:</h3><p>Time: <%= allPatientDataToBeRendered[i].cases[j].time %></p><p>Case Title: <%= allPatientDataToBeRendered[i].cases[j].caseTitle %></p><p>Description: <%= allPatientDataToBeRendered[i].cases[j].description %></p></li><% } %></ul>')">
+            <li onclick="showPopup('<%= allPatientDataToBeRendered[i].firstName %> <%= allPatientDataToBeRendered[i].lastName %>' ,
+            '<%= allPatientDataToBeRendered[i].sex %>' ,
+            '<%= allPatientDataToBeRendered[i].age %>' ,
+            '<%= allPatientDataToBeRendered[i].phone %>' , 
+            '<%= allPatientDataToBeRendered[i].email %>' , 
+            '<%= allPatientDataToBeRendered[i].height %>' , 
+            '<%= allPatientDataToBeRendered[i].weight %>' , 
+            '<%= allPatientDataToBeRendered[i].firstData %>' , 
+            '<%= allPatientDataToBeRendered[i].patientBasicData %>',
+            '<%= allPatientDataToBeRendered[i].underdignosis %>',
+            '<h2>Total Cases:</h2><ul><% for (let j = 0; j < allPatientDataToBeRendered[i].cases.length; j++) { %><li><h3>Case <%= j + 1 %>:</h3><p>Time: <%= allPatientDataToBeRendered[i].cases[j].time %></p><p>Case Title: <%= allPatientDataToBeRendered[i].cases[j].caseTitle %></p><p>Description: <%= allPatientDataToBeRendered[i].cases[j].description %></p></li><% } %></ul>',
+            '<h2>Key Points:</h2><% for (let j = 0; j < allPatientDataToBeRendered[i].keynotes.length; j++) { %><p><%= allPatientDataToBeRendered[i].keynotes[j] %><% } %></p>'
+            )">
 
-                <h3><%= allPatientDataToBeRendered[i].firstName %> <%= allPatientDataToBeRendered[i].lastName %></h3>
+                <h3>
+                    <%= allPatientDataToBeRendered[i].firstName %>
+                        <%= allPatientDataToBeRendered[i].lastName %>
+                </h3>
                 <span><b>Sex:</b>
                     <%= allPatientDataToBeRendered[i].sex %>
                 </span>
@@ -161,7 +176,7 @@
         }
 
 
-        function showPopup(patientName, sex, age, number, phone, email, height, weight, basic, summary, cases) {
+        function showPopup(patientName, sex, age, number, email, height, weight, basic, summary, underdignosis, cases, keynotes) {
             const popup = document.getElementById("popup");
             const overlay = document.getElementById("overlay");
             const patientDetails = document.getElementById("patientDetails");
@@ -175,9 +190,11 @@
                 "Weight: " + weight + "<br>" +
                 "Basic Data Given: " + basic + "<br>" +
                 "Summary: " + summary + "<br>" +
-                '<div>' + cases + '</div>';
+                "Under Diagnosis: " + underdignosis + "<br>" +
+                '<div>' + keynotes + '</div>' +
+                '<div>' + cases + '</div>'
 
-
+            
             popup.style.display = "block";
             overlay.style.display = "block";
         }

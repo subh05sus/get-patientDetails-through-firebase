@@ -56,7 +56,7 @@ app.get("/", (req, res) => {
 // -------------------------read------------------------------
 
 app.post("/PatientData", async (req, res) => {
-  const userId = req.body.id;
+  const userId = req.body.id
   const userPasskey = req.body.passkey;
 
   if (!userId || !userPasskey) {
@@ -100,7 +100,6 @@ app.post("/PatientData", async (req, res) => {
         max_tokens: 100,
       });
       summaryofPatient = chatCompletion.choices[0].message.content;
-      console.log(summaryofPatient);
 
       await db.collection("PatientData").doc(userId).update({
         patientBasicData: summaryofPatient,
@@ -138,7 +137,6 @@ app.post("/PatientData", async (req, res) => {
 
     // ------------------fetching all patient Data-----------------
 
-    console.log(allPatientDataArray);
 
     if (userData.password !== userPasskey) {
       res.send("Incorrect passkey");
@@ -177,7 +175,6 @@ app.get("/allData", async (req, res) => {
     let allPatientDataToBeRendered = []
 
     for (let i = 0; i < allPatientDataArray.length; i++) {
-      const element = allPatientDataArray[i];
 
       const userRef = db
         .collection("PatientData")
@@ -190,28 +187,15 @@ app.get("/allData", async (req, res) => {
       }
 
       const userData = response.data();
-
       allPatientDataToBeRendered.push(userData)
 
-      
+      console.log(allPatientDataToBeRendered[i].keynotes)
     }
-    const popupContent =[] 
-    for (let i = 0; i < allPatientDataArray.length; i++) {
-      let patientHTML = `
-      <h2>Patient Details</h2>
-      <p><b>Name:</b> ${allPatientDataToBeRendered[i].firstName} ${allPatientDataToBeRendered[i].lastName}</p>
-      <p><b>Sex:</b> ${allPatientDataToBeRendered[i].sex}</p>
-      <p><b>Age:</b> ${allPatientDataToBeRendered[i].age}</p>
-      <p><b>Phone Number:</b> ${allPatientDataToBeRendered[i].phone}</p>
-      <p><b>Email:</b> ${allPatientDataToBeRendered[i].email}</p>
-      `
-      popupContent.push(patientHTML)
-    }
+
       
 
     res.render("allData", {
       allPatientDataToBeRendered,
-      popupC: popupContent,
     });
   } catch (e) {
     console.error(e);

@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>User Details</title>
     <style>
         /* Add your CSS styles here */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
+            background-color: #ffffff;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content:center;
+            justify-content: center;
             align-items: start;
             margin-top: 20px;
             min-height: 100vh;
         }
 
         .card {
-            background-color: #fff;
+            background-color: #f4f4f4;
             border-radius: 10px;
             border-color: #444444;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             padding: 20px;
             width: 90%;
-            max-height: 90%;
             text-align: left;
+            margin-top: 30px;
+            margin-bottom: 30px;
         }
 
         h1 {
@@ -61,62 +63,129 @@
         button:hover {
             background-color: #001c94;
         }
-        @media (max-width: 1080px) {
-            .card {
-                padding: 45px;
-            }
 
-            h1 {
-                font-size: 72px;
-            }
-            h2,h3{
-                font-size: 60px;
-            }
+        .keynotes {
+            background-color: #fff;
+            border-radius: 10px;
+            border-color: #444444;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-height: 90%;
+            text-align: left;
 
-            p {
-                font-size: 48px;
-                margin: 36px 0;
-            }
+        }
 
-            ul {
-                margin-top: 36px;
-            }
+        .keypoints {
+            margin-bottom: 0;
+            border-radius: 0;
+            padding: 0;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+        }
 
-            li {
-                padding: 36px;
-                margin-bottom: 60px;
-            }
 
-            button {
-                padding: 42px 84px;
-                font-size: 60px;
+        .userDetails {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .basicDetails2 {
+            display: flex;
+            flex-direction: row;
+
+            .contact {
+                width: 50%;
             }
+        }
+
+        .basicDetails1 {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            margin-right: 80px;
+        }
+        .hero{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+        .profilepic{
+            max-width: 25%;
+        }
+        .pp{
+            width: 80%;
+            max-width: 250px;
+            max-height: 250px;
         }
     </style>
 </head>
+
 <body>
     <div class="card">
         <h1>User Details</h1>
-        <p>Name: <%= user.firstName %> <%= user.lastName %></p>
-        <p>Sex: <%= user.sex %></p>
-        <p>Age: <%= user.age %></p>
-        <p>Phone Number: <%= user.phone %></p>
-        <p>Email: <%= user.email %></p>
-        <p>Height: <%= user.height %></p>
-        <p>Weight: <%= user.weight %></p>
-        <p>Basic Data Given: <%= user.firstData %></p>
-        <p>Summary: <%= user.patientBasicData %></p>
-        
-        <h2>Total Cases:</h2>
+        <div class="hero">
+
+            <div class="userDetails">
+                <p>
+                <h2><%= user.firstName %>
+                        <%= user.lastName %>
+                </h2>
+                </p>
+                <div class="basicDetails2">
+                    <div class="contact">
+                        <p><b>Phone Number: </b><%= user.phone %>
+                        </p>
+                    </div>
+                    <div class="contact">
+                        <p><b>Email:</b> <%= user.email %>
+                        </p>
+                    </div>
+                </div>
+                <div class="basicDetails1">
+                    <p><b>Sex:</b> <%= user.sex %>
+                    </p>
+                    <p><b>Age:</b> <%= user.age %>
+                    </p>
+                    <p><b>Height:</b> <%= user.height %>
+                    </p>
+                    <p><b>Weight:</b> <%= user.weight %>
+                    </p>
+                </div>
+                <p><b>Basic Data Given:</b> <%= user.firstData %>
+                </p>
+                <p><b>Summary:</b> <%= user.patientBasicData %>
+                </p>
+            </div>
+            <div class="profilepic">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp" class="pp">
+            </div>
+        </div>
+        <!-- fetch under diagnosis and keynotes form chat history -->
+        <p><b>Under Dignosis:</b> <%= user.underdignosis %></p>
+        <div class="keynotes">
+            <h3><b>Key notes:</b></h3>
+            <ul>
+                <% for (let i=0; i < user.keynotes.length; i++) { %>
+                    <li class="keypoints">
+                        <p> - <%= user.keynotes[i] %>
+                        </p>
+                    </li>
+                    <% } %>
+            </ul>
+        </div>
+
+
+        <h3><b>Total Cases:</b></h3>
         <ul>
-            <% for (let i = 0; i < user.cases.length; i++) { %>
+            <% for (let i=0; i < user.cases.length; i++) { %>
                 <li>
-                    <h3>Case <%= i + 1 %>:</h3>
-                    <p>Time: <%= user.cases[i].time %></p>
-                    <p>Case Title: <%= user.cases[i].caseTitle %></p>
-                    <p>Description: <%= user.cases[i].description %></p>
+                    <h3>Case <%= i + 1 %>: <%= user.cases[i].caseTitle %></h3>
+                    <p><b>Time:</b> <%= user.cases[i].time %>
+                    </p>
+                    <p><b>Description: </b><%= user.cases[i].description %>
+                    </p>
                 </li>
-            <% } %>
+                <% } %>
         </ul>
 
         <!-- Back button -->
@@ -130,4 +199,5 @@
         }
     </script>
 </body>
+
 </html>
