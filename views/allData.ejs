@@ -28,9 +28,14 @@
             background-color: #fff;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
             padding: 20px;
-            max-width: 400px;
+            max-width: 100%;
+            max-height: 90%;
             z-index: 9999;
+            overflow-y: scroll;
+            border-radius: 15px;
         }
+
+
 
         .card {
             background-color: #fff;
@@ -118,12 +123,9 @@
     <div class="card">
         <h1>All Patients</h1>
         <% for (let i=0; i < allPatientDataToBeRendered.length; i++) { %>
-            <li>
-                <h3
-                    onclick="showPopup('<%= allPatientDataToBeRendered[i].firstName %> <%= allPatientDataToBeRendered[i].lastName %>' , '<%= allPatientDataToBeRendered[i].sex %>' , '<%= allPatientDataToBeRendered[i].age %>' , '<%= allPatientDataToBeRendered[i].phone %>' , '<%= allPatientDataToBeRendered[i].email %>' , '<%= allPatientDataToBeRendered[i].height %>' , '<%= allPatientDataToBeRendered[i].weight %>' , '<%= allPatientDataToBeRendered[i].firstData %>' , '<%= allPatientDataToBeRendered[i].patientBasicData %>','<h2>Total Cases:</h2><ul><% for (let j = 0; j < allPatientDataToBeRendered[i].cases.length; j++) { %><li><h3>Case <%= j + 1 %>:</h3><p>Time: <%= allPatientDataToBeRendered[i].cases[j].time %></p><p>Case Title: <%= allPatientDataToBeRendered[i].cases[j].caseTitle %></p><p>Description: <%= allPatientDataToBeRendered[i].cases[j].description %></p></li><% } %></ul>')">
-                    <%= allPatientDataToBeRendered[i].firstName %>
-                        <%= allPatientDataToBeRendered[i].lastName %>
-                </h3>
+            <li onclick="showPopup('<%= allPatientDataToBeRendered[i].firstName %> <%= allPatientDataToBeRendered[i].lastName %>' , '<%= allPatientDataToBeRendered[i].sex %>' , '<%= allPatientDataToBeRendered[i].age %>' , '<%= allPatientDataToBeRendered[i].phone %>' , '<%= allPatientDataToBeRendered[i].email %>' , '<%= allPatientDataToBeRendered[i].height %>' , '<%= allPatientDataToBeRendered[i].weight %>' , '<%= allPatientDataToBeRendered[i].firstData %>' , '<%= allPatientDataToBeRendered[i].patientBasicData %>','<h2>Total Cases:</h2><ul><% for (let j = 0; j < allPatientDataToBeRendered[i].cases.length; j++) { %><li><h3>Case <%= j + 1 %>:</h3><p>Time: <%= allPatientDataToBeRendered[i].cases[j].time %></p><p>Case Title: <%= allPatientDataToBeRendered[i].cases[j].caseTitle %></p><p>Description: <%= allPatientDataToBeRendered[i].cases[j].description %></p></li><% } %></ul>')">
+
+                <h3><%= allPatientDataToBeRendered[i].firstName %> <%= allPatientDataToBeRendered[i].lastName %></h3>
                 <span><b>Sex:</b>
                     <%= allPatientDataToBeRendered[i].sex %>
                 </span>
@@ -173,7 +175,8 @@
                 "Weight: " + weight + "<br>" +
                 "Basic Data Given: " + basic + "<br>" +
                 "Summary: " + summary + "<br>" +
-                cases;
+                '<div>' + cases + '</div>';
+
 
             popup.style.display = "block";
             overlay.style.display = "block";
