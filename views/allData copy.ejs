@@ -18,7 +18,6 @@
             list-style-type: none;
 
         }
-
         .popup {
             display: none;
             position: fixed;
@@ -119,8 +118,7 @@
         <h1>All Patients</h1>
         <% for (let i=0; i < allPatientDataToBeRendered.length; i++) { %>
             <li>
-                <h3
-                    onclick="showPopup('<%= allPatientDataToBeRendered[i].firstName %> <%= allPatientDataToBeRendered[i].lastName %>' , '<%= allPatientDataToBeRendered[i].sex %>' , '<%= allPatientDataToBeRendered[i].age %>' , '<%= allPatientDataToBeRendered[i].phone %>' , '<%= allPatientDataToBeRendered[i].email %>' , '<%= allPatientDataToBeRendered[i].height %>' , '<%= allPatientDataToBeRendered[i].weight %>' , '<%= allPatientDataToBeRendered[i].firstData %>' , '<%= allPatientDataToBeRendered[i].patientBasicData %>','<h2>Total Cases:</h2><ul><% for (let j = 0; j < allPatientDataToBeRendered[i].cases.length; j++) { %><li><h3>Case <%= j + 1 %>:</h3><p>Time: <%= allPatientDataToBeRendered[i].cases[j].time %></p><p>Case Title: <%= allPatientDataToBeRendered[i].cases[j].caseTitle %></p><p>Description: <%= allPatientDataToBeRendered[i].cases[j].description %></p></li><% } %></ul>')">
+                <h3 onclick="showPopup('<%= allPatientDataToBeRendered[i].firstName %> <%= allPatientDataToBeRendered[i].lastName %><p>Sex: <%= allPatientDataToBeRendered[i].sex %></p><p>Age: <%= allPatientDataToBeRendered[i].age %></p><p>Phone Number: <%= allPatientDataToBeRendered[i].phone %></p><p>Email: <%= allPatientDataToBeRendered[i].email %></p><p>Height: <%= allPatientDataToBeRendered[i].height %></p><p>Weight: <%= allPatientDataToBeRendered[i].weight %></p><p>Basic Data Given: <%= allPatientDataToBeRendered[i].firstData %></p><p>Summary: <%= allPatientDataToBeRendered[i].patientBasicData %></p>')">
                     <%= allPatientDataToBeRendered[i].firstName %>
                         <%= allPatientDataToBeRendered[i].lastName %>
                 </h3>
@@ -145,36 +143,49 @@
 
                 <button onclick="goBack()">Back</button>
     </div>
-    <!-- Hidden popup and overlay -->
-    <div class="overlay" id="overlay"></div>
-    <div class="popup" id="popup">
-        <h2>Patient Details</h2>
-        <p id="patientDetails"></p>
-        <button onclick="closePopup()">Close</button>
-    </div>
+     <!-- Hidden popup and overlay -->
+     <div class="overlay" id="overlay"></div>
+     <div class="popup" id="popup">
+         <h2>Patient Details</h2>
+         <p id="patientDetails"></p>
+         <button onclick="closePopup()">Close</button>
+     </div>
 
     <script>
         function goBack() {
             window.history.back();
         }
+        // function detailedView(index) {
+            
+        //     const patient = allPatientDataToBeRendered[index];
+        //     console.log(patient)
+        //     // Check if patient exists
+        //     if (patient) {
+        //         const popupWindow = window.open("", "Patient Details", "width=400,height=400");
 
+        //         const popupContent = `
+        //             <h2>Patient Details</h2>
+        //             <p><b>Name:</b> ${patient.firstName} ${patient.lastName}</p>
+        //             <p><b>Sex:</b> ${patient.sex}</p>
+        //             <p><b>Age:</b> ${patient.age}</p>
+        //             <p><b>Phone Number:</b> ${patient.phone}</p>
+        //             <p><b>Email:</b> ${patient.email}</p>
+        //             <p><b>Summary:</b> ${patient.patientBasicData}</p>
+        //         `;
 
-        function showPopup(patientName, sex, age, number, phone, email, height, weight, basic, summary, cases) {
+        //         popupWindow.document.body.innerHTML = popupContent;
+        //     }
+        // }
+
+        function showPopup(patientName) {
             const popup = document.getElementById("popup");
             const overlay = document.getElementById("overlay");
             const patientDetails = document.getElementById("patientDetails");
+            
+            // Set the patient details in the popup
+            patientDetails.textContent = "Name: " + patientName; // You can add more details here
 
-            patientDetails.innerHTML = "Name: " + patientName + "<br>" +
-                "Sex: " + sex + "<br>" +
-                "Age: " + age + "<br>" +
-                "Phone Number: " + number + "<br>" +
-                "Email: " + email + "<br>" +
-                "Height: " + height + "<br>" +
-                "Weight: " + weight + "<br>" +
-                "Basic Data Given: " + basic + "<br>" +
-                "Summary: " + summary + "<br>" +
-                cases;
-
+            // Show the popup and overlay
             popup.style.display = "block";
             overlay.style.display = "block";
         }
@@ -182,7 +193,7 @@
         function closePopup() {
             const popup = document.getElementById("popup");
             const overlay = document.getElementById("overlay");
-
+            
             // Hide the popup and overlay
             popup.style.display = "none";
             overlay.style.display = "none";

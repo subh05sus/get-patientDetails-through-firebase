@@ -2,14 +2,19 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
-const admin = require("firebase-admin");
-const credentials = require("./key.json");
+
+// ---------------------openai----------------------
 
 const OpenAI = require("openai");
+const credentials = require("./key.json");
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+
+
+// -----------------------firebase-----------------
+const admin = require("firebase-admin");
 admin.initializeApp({
   credential: admin.credential.cert(credentials),
 });
@@ -18,16 +23,35 @@ const db = admin.firestore();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+// ----------------------port----------------------------
 const PORT = 3000;
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
 
-const ejs = require("ejs"); // Require EJS
-app.set("view engine", "ejs"); // Set EJS as the view engine
 
-// --------------------view----------------------------------
-app.get("/", (req, res) => {
+
+// ----------------------ejs view engine------------------------
+const ejs = require("ejs");
+app.set("view engine", "ejs"); 
+
+// --------------------new----------------------------------
+app.get("/new", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
+
+
+
+
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/home.html");
+});
+
+
+
+
+
+
 
 // -------------------------read------------------------------
 
@@ -167,54 +191,27 @@ app.get("/allData", async (req, res) => {
 
       const userData = response.data();
 
-      console.log(userData);
       allPatientDataToBeRendered.push(userData)
 
       
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // const patientData = {
-    //   email: userData.email,
-    //   doctorPass: userData.doctorPass,
-    // };
-
-    // await db.collection("DoctorData").doc("doctor1@example.com").update({
-    //   PatientData: allPatientDataArray,
-    // });
-
-    // console.log(allPatientDataArray);
-
-    // if (userData.password !== userPasskey) {
-    //   res.send("Incorrect passkey");
-    //   return;
-    // }
-
-    // for (let i = 0; i < allPatientDataArray.length; i++) {
-    //   const element = allPatientDataArray[i];
-    //   try {
-    //     const allDataRef = db.collection("PatientData").doc(element.email);
-    //     const allDataRes = await allDataRef.get();
-    //     const allData = allDataRes.data();
-    //     if (element.doctorPass === allData.doctorPass) {
-    //       console.log(allData);
-    //     }
-    //   } catch (error) {}
-    // }
+    const popupContent =[] 
+    for (let i = 0; i < allPatientDataArray.length; i++) {
+      let patientHTML = `
+      <h2>Patient Details</h2>
+      <p><b>Name:</b> ${allPatientDataToBeRendered[i].firstName} ${allPatientDataToBeRendered[i].lastName}</p>
+      <p><b>Sex:</b> ${allPatientDataToBeRendered[i].sex}</p>
+      <p><b>Age:</b> ${allPatientDataToBeRendered[i].age}</p>
+      <p><b>Phone Number:</b> ${allPatientDataToBeRendered[i].phone}</p>
+      <p><b>Email:</b> ${allPatientDataToBeRendered[i].email}</p>
+      `
+      popupContent.push(patientHTML)
+    }
+      
 
     res.render("allData", {
       allPatientDataToBeRendered,
+      popupC: popupContent,
     });
   } catch (e) {
     console.error(e);
