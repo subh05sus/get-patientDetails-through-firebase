@@ -5,6 +5,25 @@
     <title>User Details</title>
     <style>
         /* Add your CSS styles here */
+        .preloader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #072AC8; /* Change the color as needed */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 2s linear infinite;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            display: none; /* Initially hidden */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #ffffff;
@@ -118,10 +137,13 @@
             max-width: 250px;
             max-height: 250px;
         }
+
     </style>
 </head>
 
 <body>
+    <div class="preloader" id="preloader"></div>
+
     <div class="card">
         <h1>User Details</h1>
         <div class="hero">
@@ -162,7 +184,7 @@
             </div>
         </div>
         <!-- fetch under diagnosis and keynotes form chat history -->
-        <p><b>Under Dignosis:</b> <%= user.underdiagnosis %></p>
+        <p><b>Under Dignosis:</b> <%= user.underdignosis %></p>
         <div class="keynotes">
             <h3><b>Key notes:</b></h3>
             <ul>
@@ -194,6 +216,12 @@
     </div>
 
     <script>
+        // JavaScript function to hide the preloader when the page is fully loaded
+        window.addEventListener('load', function () {
+            const preloader = document.getElementById('preloader');
+            preloader.style.display = 'none'; // Hide the preloader
+        });
+        
         // JavaScript function to go back to the previous page
         function goBack() {
             window.history.back();

@@ -147,8 +147,8 @@ app.post("/PatientData", async (req, res) => {
       //------------------------------------keynotes generation--------------------------------
       const chatCompletion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "assistant", content: chatString+"\n\nYou are a charting bot that will be given a patient intake transcription. You are to translate the chat log into thorough medical notes for the physician. Don't divide it into subgroups. Give the string only of important keypoints that the patient having, each element is supposed to be separated by a fullstop(.) and contain under 10 words." }],
-        max_tokens: 600,
+        messages: [{ role: "assistant", content: chatString+"\n\nYou are a charting bot that will be given a patient intake transcription. You are to translate the chat log into thorough medical notes for the physician. Don't divide it into subgroups. Give the string only of important keypoints that the patient having, each element is supposed to be separated by a fullstop(.) and contain under 10 words. Don't add recommendation part." }],
+        max_tokens: 750,
       });
       keygenhaha = chatCompletion.choices[0].message.content;
       console.log(keygenhaha);
