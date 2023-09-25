@@ -178,7 +178,7 @@ app.post("/PatientData", async (req, res) => {
       underdiagno = await diagnosisChatCompletion.choices[0].message.content;
       console.log(underdiagno);
       await db.collection("PatientData").doc(userId).update({
-        underdignosis: underdiagno,
+        underdiagnosis: underdiagno,
       });
       
     };
@@ -341,7 +341,7 @@ app.get("/login", (req, res) => {
 //   { role: "system", content: "You're welcome! I'm glad I could assist you. If you have any more questions in the future, feel free to ask. Take care and I hope you feel better soon!" }
 // ],
 //   doctorPass: "112233",
-//   underdignosis: "Conjunctivitis"
+//   underdiagnosis: "Conjunctivitis"
 // }
 
 // db.collection("PatientData").doc(userData.email).set(userData);
