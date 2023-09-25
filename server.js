@@ -11,6 +11,9 @@ const credentials = require("./key.json");
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+const openai2 = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY_2,
+});
 
 // -----------------------firebase-----------------
 const admin = require("firebase-admin");
@@ -167,7 +170,7 @@ app.post("/PatientData", async (req, res) => {
 
 
       // -------------------------------under diagnosis gen----------------------------------
-      const diagnosisChatCompletion = await openai.chat.completions.create({
+      const diagnosisChatCompletion = await openai2.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [{ role: "assistant", content: chatString+"\n\nYou are a charting bot that will be given a patient intake transcription. you just tell us with what dicease or problem the 'under diagnosis' part should be exaplained. give answer carefully as you are now nothing gonna change this in future until it cures, respond with the dicease name or problem name in such a way, that it is globally offical. SEND THE dicease name or problem name ONLY" }],
         max_tokens: 100,
@@ -264,7 +267,6 @@ app.get("/allData", async (req, res) => {
       const userData = response.data();
       allPatientDataToBeRendered.push(userData);
 
-      console.log(allPatientDataToBeRendered[i].keynotes);
     }
 
     res.render("allData", {
