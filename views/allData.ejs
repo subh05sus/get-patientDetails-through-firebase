@@ -83,39 +83,7 @@
             background-color: #001c94;
         }
 
-        @media (max-width: 1080px) {
-            .card {
-                padding: 45px;
-            }
-
-            h1 {
-                font-size: 72px;
-            }
-
-            h2,
-            h3 {
-                font-size: 60px;
-            }
-
-            p {
-                font-size: 48px;
-                margin: 36px 0;
-            }
-
-            ul {
-                margin-top: 36px;
-            }
-
-            li {
-                padding: 36px;
-                margin-bottom: 60px;
-            }
-
-            button {
-                padding: 42px 84px;
-                font-size: 60px;
-            }
-        }
+        
     </style>
 </head>
 
@@ -132,7 +100,7 @@
             '<%= allPatientDataToBeRendered[i].weight %>' , 
             '<%= allPatientDataToBeRendered[i].firstData %>' , 
             '<%= allPatientDataToBeRendered[i].patientBasicData %>',
-            '<%= allPatientDataToBeRendered[i].underdignosis %>',
+            '<%= allPatientDataToBeRendered[i].underdiagnosis %>',
             '<h2>Total Cases:</h2><ul><% for (let j = 0; j < allPatientDataToBeRendered[i].cases.length; j++) { %><li><h3>Case <%= j + 1 %>:</h3><p>Time: <%= allPatientDataToBeRendered[i].cases[j].time %></p><p>Case Title: <%= allPatientDataToBeRendered[i].cases[j].caseTitle %></p><p>Description: <%= allPatientDataToBeRendered[i].cases[j].description %></p></li><% } %></ul>',
             '<h2>Key Points:</h2><% for (let j = 0; j < allPatientDataToBeRendered[i].keynotes.length; j++) { %><p><%= allPatientDataToBeRendered[i].keynotes[j] %><% } %></p>'
             )">
@@ -176,7 +144,7 @@
         }
 
 
-        function showPopup(patientName, sex, age, number, email, height, weight, basic, summary, underdignosis, cases, keynotes) {
+        function showPopup(patientName, sex, age, number, email, height, weight, basic, summary, underdiagnosis, cases, keynotes) {
             const popup = document.getElementById("popup");
             const overlay = document.getElementById("overlay");
             const patientDetails = document.getElementById("patientDetails");
@@ -190,7 +158,7 @@
                 "Weight: " + weight + "<br>" +
                 "Basic Data Given: " + basic + "<br>" +
                 "Summary: " + summary + "<br>" +
-                "Under Diagnosis: " + underdignosis + "<br>" +
+                "Under Diagnosis: " + underdiagnosis + "<br>" +
                 '<div>' + keynotes + '</div>' +
                 '<div>' + cases + '</div>'
 
