@@ -23,13 +23,15 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
+var auth = admin.auth();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const storage = admin.storage();
 var storageRef = storage.bucket("meow");
 
 // ----------------------port----------------------------
-const PORT = 3000;
+const PORT = 8080;
 app.listen(PORT, () => console.log(`Example app listening on port ${PORT}!`));
 
 // ----------------------ejs view engine------------------------
@@ -110,7 +112,7 @@ app.post("/PatientData", async (req, res) => {
 
     // ------------------------generation of summary-----------------------------
     let caseHistory =
-      "You are a bot who takes case history of a patient and summarizes it into 3-4 sentences that a doctor can easity understand. ONLY PROVIDE THE SUMMARY, NO SUMMARY TITLES\n\nHere's the case history of patient:\n";
+      "You are a bot who takes case history of a patient and summarizes it into 1-2 sentences that a doctor can easity understand. ONLY PROVIDE THE SUMMARY, NO SUMMARY TITLES\n\nHere's the case history of patient:\n";
     caseHistory += await userData.patientBasicData;
     userData.cases.forEach((caseItem, index) => {
       caseHistory += `${index + 1}. ${caseItem.caseTitle}\n${
@@ -118,11 +120,11 @@ app.post("/PatientData", async (req, res) => {
       }\n\n`;
     });
     let chatHist = await userData.chatHistory;
-    const chatString = chatHist.map(message => `${message.role}: ${message.content}`).join('\n');
+    const chatString = chatHist
+      .map((message) => `${message.role}: ${message.content}`)
+      .join("\n");
 
     // console.log(chatString);
-
-
 
     caseHistory += chatString;
     caseHistory += "NOW GIVE THE SUMMARY";
@@ -130,7 +132,7 @@ app.post("/PatientData", async (req, res) => {
     let summaryofPatient = userData.patientBasicData;
 
     const summary = async () => {
-      const chatCompletion = await openai.chat.completions.create({
+      const chatCompletion = await openai2.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [{ role: "assistant", content: caseHistory }],
         max_tokens: 100,
@@ -145,34 +147,46 @@ app.post("/PatientData", async (req, res) => {
 
     await summary();
 
-
     const lmaoded = async () => {
       //------------------------------------keynotes generation--------------------------------
       const chatCompletion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "assistant", content: chatString+"\n\nYou are a charting bot that will be given a patient intake transcription. You are to translate the chat log into thorough medical notes for the physician. Don't divide it into subgroups. Give the string only of important keypoints that the patient having, each element is supposed to be separated by a fullstop(.) and contain under 10 words. Don't add recommendation part." }],
+        messages: [
+          {
+            role: "assistant",
+            content:
+              chatString +
+              "\n\nYou are a charting bot that will be given a patient intake transcription. You are to translate the chat log into thorough medical notes for the physician. Don't divide it into subgroups. Give the string only of important keypoints that the patient having, each element is supposed to be separated by a fullstop(.) and contain under 10 words. Don't add recommendation part. ONLY GENERATE MAXIMUM 7 POINTS AND MINIMUM 3 POINTS. dont add numberings",
+          },
+        ],
         max_tokens: 750,
       });
       keygenhaha = chatCompletion.choices[0].message.content;
       console.log(keygenhaha);
-      let keynoteArr = keygenhaha.split(".")
-      console.log(keynoteArr)
-      console.log(keynoteArr.length)
-      keynoteArr.pop()
-      console.log("\n\nkeynotes\n")
+      let keynoteArr = keygenhaha.split(".");
+      console.log(keynoteArr);
+      console.log(keynoteArr.length);
+      keynoteArr.pop();
+      console.log("\n\nkeynotes\n");
       for (let i = 0; i < keynoteArr.length; i++) {
         const element = keynoteArr[i];
-        console.log(i+".\n"+element)
+        console.log(i + ".\n" + element);
       }
       await db.collection("PatientData").doc(userId).update({
         keynotes: keynoteArr,
       });
 
-
       // -------------------------------under diagnosis gen----------------------------------
-      const diagnosisChatCompletion = await openai2.chat.completions.create({
+      const diagnosisChatCompletion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
-        messages: [{ role: "assistant", content: chatString+"\n\nYou are a charting bot that will be given a patient intake transcription. you just tell us with what dicease or problem the 'under diagnosis' part should be exaplained. give answer carefully as you are now nothing gonna change this in future until it cures, respond with the dicease name or problem name in such a way, that it is globally offical. SEND THE dicease name or problem name ONLY" }],
+        messages: [
+          {
+            role: "assistant",
+            content:
+              chatString +
+              "\n\nYou are a charting bot that will be given a patient intake transcription. you just tell us with what dicease or problem the 'under diagnosis' part should be exaplained. give answer carefully as you are now nothing gonna change this in future until it cures, respond with the dicease name or problem name in such a way, that it is globally offical. SEND THE dicease name or problem name ONLY. Don't expose that you are an AI, response will NULL if you are facing problem finding the correct answer.",
+          },
+        ],
         max_tokens: 100,
       });
       underdiagno = await diagnosisChatCompletion.choices[0].message.content;
@@ -180,13 +194,110 @@ app.post("/PatientData", async (req, res) => {
       await db.collection("PatientData").doc(userId).update({
         underdiagnosis: underdiagno,
       });
-      
     };
-    
-    await lmaoded();
-    
 
-    // mergeMarkdownFiles(markdownFiles, chatHistory);
+    // await lmaoded();
+      // -------------------------------possible outcomes gen----------------------------------
+
+
+      const diagnosisMD = "# MISSION;\
+      You are a medical notes bot that will be given a chart or symptoms for a patient shortly after intake. You will generate a list of the most likely diagnosis or avenues of investigation for the physician to follow up on;\
+      # INTERACTION SCHEMA;\
+      The USER will give you the medical notes. You will generate a report with the following format;\
+      1. <POTENTIAL DIAGNOSIS ALL CAPS>: <Description of the condition, common alternative names, etc>;\
+         - DIFFERENTIALS: <Differentials description>;\
+         - DEMOGRAPHICS: <Typical demographic of affliction, demographic risk factors>;\
+         - SYMPTOMS: <Formal list of symptoms>;\
+         - INDICATORS: <Why this patient matches this diagnosis>;\
+         - CONTRAINDICATORS: <Why this patient doesn;\'t match this diagnosis>;\
+         - PROGNOSIS: <General outlook for condition>;\
+         - TREATMENT: <Available treatment options>;\
+         - TESTS: <Recommended follow up tests, and what you\'re looking for, probative information desired>;\n\n\
+      2. <POTENTIAL DIAGNOSIS ALL CAPS>: <Description of the condition, common alternative names, etc>;\
+         - DIFFERENTIALS: <Differentials description>;\
+         - DEMOGRAPHICS: <Typical demographic of affliction, demographic risk factors>;\
+         - SYMPTOMS: <Formal list of symptoms>;\
+         - INDICATORS: <Why this patient matches this diagnosis>;\
+         - CONTRAINDICATORS: <Why this patient doesn;\'t match this diagnosis>;\
+         - PROGNOSIS: <General outlook for condition>;\
+         - TREATMENT: <Available treatment options>;\
+         - TESTS: <Recommended follow up tests, and what you\'re looking for, probative information desired>;\
+      " 
+      const diagnosisMDCompletion = await openai2.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "assistant",
+            content:
+            diagnosisMD +
+            chatString+
+            "\n\nNO NEED TO ADD EXTRA STYLING THERE. MAKE EVERY SENTENCE SEPERATED BY SEMICOLON (;)",
+          },
+        ],
+        max_tokens: 1500,
+      });
+      let diagnosisMDCompletionTest = await diagnosisMDCompletion.choices[0].message.content;
+      console.log(diagnosisMDCompletionTest);
+      await db.collection("PatientData").doc(userId).update({
+        diagnosisMDCompletionTest: diagnosisMDCompletionTest,
+      });
+      
+      
+      
+      
+      const clinicMD = "# MISSION;;\
+      You are a medical intake bot. You are preparing for the final step before the medical professional (physician, nurse, PA) evaluates the patient in a clinical setting. You will be given notes from the patient\'s intake as well as system-generated diagnostic avenues of investigation. You are to prepare some clinical recommendations to evaluate the patient. Keep in mind that this is a primary care visit.;;\
+      # SENSES;;\
+      Sight, sound, smell, touch (palpation) as well as other clinical tests. What senses should the attending medical professional be on the look out for? Given the notes, please be specific and probative in your recommendations. Make sure to explain what to look for as well as why it could be helpful.;;\
+      # CLINICAL EXAMINATION;;\
+      Please list specific examination techniques that you recommend as well as what to look for and why. Remember that this is strictly for the clinical visit. We will worry about referrals and follow-up later. Focus only on primary care type techniques.;;\
+      # INTERVIEW QUESTIONS;;\
+      Suggest several questions for the clinician to ask the patient as part of the investigation;;\
+      # OUTPUT FORMAT;;\
+      Regardless of the input format (you may be given notes, charts, chat logs, etc) your output format must be consistent and use the following:;;\
+      ## SENSES;;\
+      SIGHT: <What to look for when visually engaging the patient. Explain why this information could be probative.>;;\
+      SOUND: <What to listen for when engaging the patient. Explain why this information could be probative.>;;\
+      TOUCH: <What physical sensations, if any, to look for when palpating. Explain why this information could be probative.>;;\
+      SMELL: <What smells to pay attention to, if any may be relevant. Explain why this information could be probative.>;;\
+      ## EXAMINATION;;\
+      - <EXAMINATION TECHNIQUE ALL CAPS>: <Description of what to look for and why, e.g. how this exam is probative>;;\
+      - <EXAMINATION TECHNIQUE ALL CAPS>: <Description of what to look for and why, e.g. how this exam is probative>;;\
+      - <EXAMINATION TECHNIQUE ALL CAPS>: <Description of what to look for and why, e.g. how this exam is probative>;;\
+      ## INTERVIEW;;\
+      - <PROBATIVE PURPOSE OF QUESTION ALL CAPS>: \"<Suggested question>?\";;\
+      - <PROBATIVE PURPOSE OF QUESTION ALL CAPS>: \"<Suggested question>?\";;\
+      - <PROBATIVE PURPOSE OF QUESTION ALL CAPS>: \"<Suggested question>?\""
+      const clinicMDCompletion = await openai2.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "assistant",
+            content:
+            clinicMD +
+            chatString+
+            "\n\nNO NEED TO ADD EXTRA STYLING THERE. MAKE EVERY SENTENCE SEPERATED BY SEMICOLON (;). EVERY SENTENCE IN YOUR RENSPONSE MUST BE SEPERATED BY SEMICOLONS(;)",
+          },
+        ],
+        max_tokens: 1500,
+      });
+      let clinicMDCompletionTest = await clinicMDCompletion.choices[0].message.content;
+      console.log(clinicMDCompletionTest);
+      await db.collection("PatientData").doc(userId).update({
+        clinicMDCompletionTest: clinicMDCompletionTest,
+      });
+
+
+
+
+
+
+
+    await lmaoded();
+
+
+
+
 
     // ----------------------doctor db integration------------------------
     const doctorRef = db.collection("DoctorData").doc("doctor1@example.com");
@@ -266,7 +377,6 @@ app.get("/allData", async (req, res) => {
 
       const userData = response.data();
       allPatientDataToBeRendered.push(userData);
-
     }
 
     res.render("allData", {
@@ -276,10 +386,6 @@ app.get("/allData", async (req, res) => {
     console.error(e);
     res.send(e);
   }
-});
-
-app.get("/login", (req, res) => {
-  res.sendFile(__dirname + "/login.html");
 });
 
 // ---------------------firestore structure-------------------------------

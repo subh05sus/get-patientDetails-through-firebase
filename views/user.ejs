@@ -91,6 +91,7 @@
             padding: 20px;
             max-height: 90%;
             text-align: left;
+            margin-bottom: 20px;
 
         }
 
@@ -194,7 +195,30 @@
                         </p>
                     </li>
                     <% } %>
-            </ul>
+                </ul>
+            </div>
+            <div class="keynotes">
+                <h3><b>Possible Diagnosis :</b></h3>
+                <ul>
+                    <% for (let i=0; i < user.diagnosisMDCompletionTest.split(";").length; i++) { %>
+                        <li class="keypoints">
+                            <p><%= user.diagnosisMDCompletionTest.split(";")[i] %>
+                            </p>
+                        </li>
+                        <% } %>
+                </ul>
+        </div>
+            <div class="keynotes">
+                <h3><b>Clinical Test Diagnosis :</b></h3>
+                <!-- <p><%= user.diagnosisMDCompletionTest.split(";") %></p> -->
+                <ul>
+                    <% for (let i=0; i < user.clinicMDCompletionTest.split(";").length; i++) { %>
+                        <li class="keypoints">
+                            <p><%= user.clinicMDCompletionTest.split(";")[i] %>
+                            </p>
+                        </li>
+                        <% } %>
+                </ul>
         </div>
 
 
